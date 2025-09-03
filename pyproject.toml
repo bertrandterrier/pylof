@@ -1,0 +1,8 @@
+[project]
+name = "pylof"
+author = ["bertrandterrier <mail@immanuelstemmert.de>"]
+version = "0.1.0"
+dependencies = []
+
+[project.scripts]
+lof = "cli:app"
