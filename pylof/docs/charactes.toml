@@ -1,0 +1,23 @@
+[brackets]
+type = "angled"
+side = "L"
+num = 0
+'<' = 
+
+[bracket.'⟨']
+type = "angled",
+side = "L"
+num = 1
+
+alt1 = [, '＜']
+alt0 = ['‹']
+
+['>']
+type = "bracked"
+subtype = "angled"
+side = "R"
+_type
+
+[alts]
+alts1 = ['⟨', '＜']
+alts0 = ['‹']
