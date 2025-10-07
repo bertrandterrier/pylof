@@ -1,15 +1,64 @@
 {
-	"op": {
-		"index": [ ",", "*", "." ],
-		"mark": {
-			"open": [ "<", "⟨" ],
-			"close": [ ">", "⟩" ]
+	"render": {
+		"font": {
+			"family": "Latin Modern",
+			"size": 12,
 		},
-		"reentry": {
-			"open": [ "[", "(" ],
-			"reenter": [ "]", ")" ],
-			"oscillate": "{",
-			"count": "}"
-		} 
+		"lines": {
+			"width": 1
+		}
+	},
+	"syntax": {
+		"helper": {
+			"ref-label": [ ".", ":" ],
+			"sigil": "-",
+			"empty": [ ",", ";" ],
+			"esc": {
+				"next": "\\",
+				"block": "/",
+			}
+		},
+		"connective": {
+			"commands": {
+				"definition": "::defined_as",
+				"identity": "::is_equal",
+				"implication": "::if",
+				"inverted_implication": "::is",
+				"equivalence": "::iff",
+				"conjunction": "::and",
+				"disjunction": "::or",
+				"exclusive-disjunction": "::or_instead"
+			},
+			"symbols": {
+				"conjunction": [ "&", "*" ],
+				"definition": ":=",
+				"disjunction": "+",
+				"equivalence": ["<=>", "<->"],
+				"exclusive-disjunction": "//"
+				"identity": ["="],
+				"implication": "->",
+				"inverted-implication": "<-",
+				"meta-implication": "==>",
+				"meta-inverted-implication": "<=="
+				"negation": ["!", "~"],
+			}
+		},
+		"mark": {
+			"first-order": {
+				"open": "(",
+				"close": ")"
+			},
+			"second-order": {
+				"re-entry": {
+					"from-left": ">",
+					"from-right": "<"
+				},
+				"open": "[",
+				"turn": "]",
+				"switch": "|",
+				"switch-mark": "{",
+				"switch-unmark": "}"
+			}
+		}
 	}
 }

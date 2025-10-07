@@ -2,10 +2,9 @@ DOCUMENTATION (DRAFT!)
 ==================================================
 
 - [Terms](#terminology)
-- [Parsing](#the-parsing-process)
+- [Parsing](#parsing-process)
 
 
-# Terminology
+# Parsing Process
 
-# The Parsing Process
-
+*Pylof* uses [kMark](https://github.com/bertrandterrier/kmark) as prompting syntax.

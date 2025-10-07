@@ -1,0 +1,54 @@
+[syntax.helper]
+ref-label = [ '.', ':' ]
+sigil = '-'
+empty = ','
+esc.next = '\'
+esc.block = '/'
+esc.special-block = '//'
+
+[syntax.connective.command]
+definition = "defined_as"
+negation = "not"
+identity = "is_equal"
+implication = "implies"
+inverted_implication = "implied_by"
+equivalence = "iff"
+conjunction = "and"
+disjunction = "or"
+exclusive-disjunction = "or_instead"
+
+[syntax.connective.symbol]
+definition = ':='
+negation = [ '!', '~' ]
+identity = '='
+implication = [ '->', '==>' ]
+inverted_implication = [ '<==', '<-' ]
+equivalence = [ '<->', '<==>' ]
+conjunction = [ '*', '&' ]
+disjunction = '++'
+exclusive-disjunction = "+-"
+
+[syntax.mark.first-order]
+open = [ '<', '⟨' ]
+close = [ '>', '⟩' ]
+
+[syntax.mark.second-order]
+open = [ '[', '(' ]
+oscillator.turn = [ ']', ')' ]
+oscillator.re-entry = '|'
+
+			},
+			"second-order": {
+				"open": ["[", "("],
+				"oscillator": {
+					"turn": ["]", ")"],
+					"re-entry": "|"
+				},
+				"counter": {
+					"state-switch": "{",
+					"re-entry": "}"
+				}
+			}
+		}
+	},
+}

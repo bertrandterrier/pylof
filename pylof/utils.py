@@ -1,16 +1,17 @@
-from typing import Any, Callable, Container
 from enum import Enum, EnumType
+from typing import Any, Callable, Sequence
+from warnings import warn
 
-def eval_enum(val: int|str|Enum, enum: EnumType, use_enum_num: bool = False) -> Any:
+def to_enum(_type: EnumType, val: int|str|Enum, use_enum_num: bool = False) -> Any:
     """Asserts enum even with enum and is case insensitive."""
     if isinstance(val, str):
-        return enum(val.upper())
+        return _type(val.upper())
     elif isinstance(val, int):
-        return enum(val)
+        return _type(val)
     elif use_enum_num:
-        return enum(val.value)
+        return _type(val.value)
     else:
-        return enum(val.name.upper())
+        return _type(val.name.upper())
 
 def aslist(obj: Any) -> list:
     if isinstance(obj, list):
@@ -20,72 +21,54 @@ def aslist(obj: Any) -> list:
     else:
         return [obj]
 
-def search_lex(
-    item: Any,
-    lex: dict[str, Any],
-    use_inner: str|list[str]|None = None,
-    ignore_startswith: str|None = "_",
-    func: Callable[[Any, Any], bool] = lambda x, L: x == L,
-) -> list[str]:
-    """Searches a (lexikon) dictionary for element. Lexikon dictionary can be nested.
+def get_keychain(src: dict|list, item: Any, ignore: Callable[[str], bool] = lambda key: False) -> str|None:
+    if isinstance(src, list):
+        for i, elem in enumerate(src):
+            if isinstance(elem, (dict, list)):
+                result = get_keychain(elem, item, ignore)
+                if result:
+                    return f"{i}.{result}"
+            elif elem == item:
+                return str(i)
 
-    item: object
-        Object searched for.
-    lex: dict[str, str|dict]
-        Lexikon with nested dictionaries.
-    use_inner: str | list[str] | None
-        To limit search scope. Keys from outest to innest limiter. Limiter will 
-        not be returned.
-    """
-    use_lex: dict = {k: v for k,v in lex.items() if ignore_startswith and not k.startswith(ignore_startswith)}
+    for key, val in src:
+        if ignore(key):
+            continue
+        if isinstance(val, (list, dict)):
+            result = get_keychain(val, item, ignore)
+            if result:
+                return f"{key}.{result}"
+        elif item == val:
+            return str(key)
+    return
 
-    if use_inner:
-        for key in aslist(use_inner):
-            if not key in use_lex.keys():
-                raise KeyError(f"Invalid key \"{key}\".")
-            elif not isinstance(use_lex[key], dict):
-                raise ValueError(f"Invalid type \"{type(use_lex)}\" for key \"{key}\". Expected dictionary.")
-            use_lex = {k: v for k, v in use_inner}
+def get_poss_keychains(src: dict|list, item: Any, ignore: Callable[[str], bool] = lambda key: False) -> list[str]:
+    result: list[str] = []
+    if isinstance(src, list):
+        for i, elem in enumerate(src):
+            if isinstance(elem, (dict, list)):
+                inner_result = get_poss_keychains(elem, item, ignore)
+                result += [f"{i}.{s}" for s in inner_result]
+                continue
+            if not isinstance(elem, str):
+                warn(f"Not supported for type {type(elem)}")
+                continue
+            if elem.startswith(item):
+                result.append(str(i))
+    elif isinstance(src, dict):
+        for key, val in src.items():
+            if isinstance(val, (dict, list)):
+                inner_result = get_poss_keychains(val, item, ignore)
+                result += [f"{key}.{s}" for s in inner_result]
+                continue
+            if not isinstance(val, str):
+                warn(f"Not supported for type {type(val)}")
+            if val.startswith(item):
+                result.append(val)
+    return result
 
-    for key, val in use_lex.items():
-        if isinstance(val, dict):
-            inner_result: list[str] = search_lex(item, val, func = func)
-            if inner_result:
-                return [key] + inner_result
-        elif func(item, val):
-            return [key]
-    return []
 
-class HoldMode(Enum):
-    ONLY = 3
-    ALL = 2
-    ONE = 1
-    NONE = 0
-    NOT_ALL = -1
-
-def has(
-    spec: Container,
-    *args,
-    mode: HoldMode|str = HoldMode.ALL
-) -> bool:
-    """Checks if a container holds an number of elements. Use mode to determine 
-    behaviour."""
-    if isinstance(mode, str):
-        mode = HoldMode(mode.upper())
-
-    count: int = 0
-    for arg in args:
-        if arg in spec:
-            count += 1
-
-    match mode.name:
-        case 'ALL':
-            return count == len(args)
-        case 'NOT_ALL':
-            return count < len(args)
-        case 'ONLY':
-            return count == len(args)
-        case 'ONE':
-            return count > 1
-        case 'NONE':
-            return count <= 0
+def bcheck(seq: Sequence, item: Any) -> bool:
+    if len(seq) <= 0:
+        return False
+    return seq[-1] == item
